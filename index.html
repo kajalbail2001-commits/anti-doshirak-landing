@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANTI-DOSHIRAK | Калькулятор честной цены</title>
+
+    <!-- Fonts: Space Grotesk & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Unbounded:wght@400;500;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <!-- Schema.org -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "ANTI-DOSHIRAK",
+      "description": "Профессиональный калькулятор стоимости AI-услуг."
+    }
+    </script>
+
+    <style>
+        /* ========================================
+           DESIGN TOKENS (Pinata Vibe Brandbook)
+           ======================================== */
+        :root {
+            --bg-body: #171420;
+            --bg-white-slab: #F3F3F3;
+            --bg-card: #FFFFFF;
+
+            --bg-mesh-purple: linear-gradient(135deg, #6D57FF 0%, #F093FF 100%);
+            --bg-mesh-teal: linear-gradient(135deg, #4DE5A6 0%, #20B2AA 100%);
+
+            --text-dark: #171420;
+            --text-light: #FFFFFF;
+
+            --accent-purple: #6D57FF;
+            --accent-teal: #4DE5A6;
+            --accent-yellow: #FFE635;
+            --accent-pink: #F093FF;
+
+            --radius-xl: 60px;
+            --radius-lg: 32px;
+            --radius-pill: 9999px;
+
+            --font-head: 'Unbounded', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        /* ========================================
+           RESET & BASE
+           ======================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            overflow-x: hidden;
+            max-width: 100%;
+        }
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-light);
+            font-family: var(--font-body);
+            font-size: 18px;
+            overflow-x: hidden;
+            padding-bottom: 100px;
+        }
+
+        h1 {
+            font-family: var(--font-head);
+            font-weight: 900;
+            letter-spacing: -0.03em;
+        }
+
+        h2,
+        h3 {
+            font-family: var(--font-head);
+            font-weight: 500;
+            letter-spacing: -0.01em;
+        }
+
+        p {
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ========================================
+           HEADER (Dark, separate from hero)
+           ======================================== */
+        .site-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .site-header__title {
+            font-family: var(--font-head);
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .site-header__right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn-launch {
+            display: inline-block;
+            background: var(--accent-purple);
+            color: var(--text-light);
+            font-family: var(--font-head);
+            font-weight: 700;
+            font-size: 0.95rem;
+            padding: 12px 28px;
+            border-radius: var(--radius-pill);
+            text-decoration: none;
+            transition: transform 0.2s;
+        }
+
+        .btn-launch:hover {
+            transform: scale(1.05);
+        }
+
+        .hamburger {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 4px;
+            position: relative;
+            width: 32px;
+            height: 28px;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger span:not(.hamburger__hexagram) {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text-light);
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.is-iching span:not(.hamburger__hexagram) {
+            opacity: 0;
+            transform: scaleX(0);
+        }
+
+        .hamburger__hexagram {
+            position: absolute;
+            font-size: 42px; /* Чуть крупнее, под высоту кнопки */
+            top: 50%;
+            left: 50%;
+            opacity: 0;
+            /* Центрируем идеально через translate */
+            transform: translate(-50%, -50%) rotate(180deg) scale(0);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: none;
+            line-height: 1;
+            font-weight: 700;
+            
+            /* Создаем неоновый градиент точь-в-точь как на картинке */
+            background: linear-gradient(180deg, #D972FF 0%, #4DDEFF 40%, #4DDEFF 60%, #D972FF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent; 
+            
+            /* Добавляем легкое свечение (text-shadow не работает с background-clip: text в WebKit напрямую, 
+               поэтому используем filter) */
+            filter: drop-shadow(0 0 8px rgba(77, 222, 255, 0.6));
+        }
+
+        .hamburger.is-iching .hamburger__hexagram {
+            opacity: 1;
+            transform: translate(-50%, -50%) rotate(0deg) scale(1);
+        }
+
+        /* ========================================
+           HERO SECTION
+           ======================================== */
+
+        /* Outer: the colorful background area */
+        .hero {
+            padding: 0 0 60px 0;
+            overflow: hidden;
+        }
+
+        .hero__banner {
+            filter: hue-rotate(var(--bg-hue, 0deg));
+            transition: filter 0.6s ease;
+            background: url('assets/bg-waves.jpg') no-repeat center center;
+            background-size: cover;
+            border-radius: var(--radius-xl);
+            padding: 40px 24px 60px 24px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            position: relative;
+            min-height: 500px;
+            overflow: visible;
+            will-change: filter;
+        }
+
+        /* Ambient vignette — dark edges, calm center */
+        .hero__banner::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: radial-gradient(ellipse 70% 60% at 50% 40%,
+                    transparent 30%,
+                    rgba(23, 20, 32, 0.55) 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Ensure card and mascot sit above the vignette */
+        .hero__card {
+            z-index: 20;
+        }
+        .hero__mascot {
+            z-index: 40;
+            pointer-events: none;
+        }
+
+        /* Inner: the white rounded card */
+        .hero__card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 40px 32px 50px 32px;
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero__subtitle {
+            font-family: var(--font-head);
+            font-weight: 500;
+            font-size: 0.75rem;
+            color: var(--accent-teal);
+            margin-bottom: 20px;
+            letter-spacing: 0.02em;
+        }
+
+        .hero__heading {
+            font-family: var(--font-head);
+            font-weight: 900;
+            font-size: clamp(1.9rem, 6vw, 3rem);
+            line-height: 1.05;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: -0.03em;
+        }
+
+        .hero__heading-accent {
+            color: var(--accent-teal);
+            white-space: nowrap;
+        }
+
+        .hero__desc {
+            font-size: 1rem;
+            color: #666;
+            line-height: 1.5;
+            margin-top: 16px;
+            margin-bottom: 32px;
+        }
+
+        /* CTA buttons — stacked like Pinata */
+        .hero__cta-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: flex-start;
+            position: relative;
+            z-index: 25;
+        }
+
+        .btn-cta {
+            display: inline-block;
+            padding: 13px 26px;
+            border-radius: var(--radius-pill);
+            font-family: var(--font-head);
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-decoration: none;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.2s;
+        }
+
+        .btn-cta:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-cta--purple {
+            background: var(--accent-purple);
+            color: white;
+        }
+
+        .btn-cta--teal {
+            background: var(--accent-teal);
+            color: var(--text-dark);
+        }
+
+        .btn-cta--orange {
+            background: #FF9F43;
+            color: var(--text-dark);
+        }
+
+        /* Logo/Mascot (popping out of card bottom-right) */
+        .hero__mascot {
+            position: absolute;
+            bottom: -9px;
+            right: -29px;
+            width: 175px;
+            height: auto;
+            z-index: 40;
+            pointer-events: none;
+            opacity: 0.47;
+            filter: drop-shadow(0 4px 10px rgba(23, 20, 32, 0.15));
+        }
+
+        /* Logo below the banner */
+        .hero__logo-wrap {
+            text-align: center;
+            padding: 24px 0 0 0;
+        }
+
+        .hero__logo {
+            height: 40px;
+            width: auto;
+        }
+
+        /* ========================================
+           WRAPPERS (The Layers for Sections)
+           ======================================== */
+        .wrapper-colorful {
+            background: var(--bg-mesh-purple);
+            padding: 80px 24px;
+            margin: 96px 16px;
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Vignette on manifesto wrapper */
+        .wrapper-colorful::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: radial-gradient(ellipse 80% 70% at 50% 50%,
+                    transparent 40%,
+                    rgba(23, 20, 32, 0.4) 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Disable CSS ::before vignette when vignette is baked into background */
+        .no-pseudo-vignette::before {
+            display: none !important;
+        }
+
+        .wrapper-colorful>* {
+            position: relative;
+            z-index: 2;
+        }
+
+        .wrapper-white {
+            background: var(--bg-white-slab);
+            padding: 100px 0;
+            margin: 96px 16px;
+            border-radius: var(--radius-xl);
+            color: var(--text-dark);
+        }
+
+        /* ========================================
+           CARDS
+           ======================================== */
+        .card-inner-white {
+            width: 100%;
+            background: linear-gradient(to bottom,
+                    var(--bg-card) 60%,
+                    rgba(109, 87, 255, 0.06) 100%);
+            border-radius: var(--radius-lg);
+            padding: 60px;
+            max-width: 800px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-feature {
+            background: #FFFFFF;
+            border: 1px solid #E5E5E5;
+            padding: 40px;
+            border-radius: var(--radius-lg);
+            height: 100%;
+            transition: transform 0.2s;
+        }
+
+        .card-feature:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-purple);
+        }
+
+        .card-black {
+            background: #000;
+            color: white;
+            padding: 40px;
+            border-radius: var(--radius-lg);
+        }
+
+        /* ========================================
+           BUTTONS (general)
+           ======================================== */
+        .btn-pill {
+            display: inline-flex;
+            padding: 20px 40px;
+            border-radius: var(--radius-pill);
+            text-decoration: none;
+            font-weight: 700;
+            font-family: var(--font-head);
+            transition: transform 0.2s;
+        }
+
+        .btn-purple {
+            background: var(--accent-purple);
+            color: white;
+        }
+
+        .btn-purple:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-white {
+            background: white;
+            color: var(--accent-purple);
+        }
+
+        .btn-white:hover {
+            transform: scale(1.05);
+        }
+
+        /* ========================================
+           GRIDS
+           ======================================== */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            justify-content: center;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        /* ========================================
+           MOBILE
+           ======================================== */
+        @media (max-width: 768px) {
+
+            @media (max-width: 768px) {
+
+                .wrapper-colorful,
+                .wrapper-white {
+                    margin: 0 16px 60px 16px;
+                    border-radius: 32px;
+                    padding: 40px 24px;
+                }
+            }
+
+            .heading-losemoney {
+                font-size: 2rem !important;
+                margin-bottom: 40px !important;
+            }
+
+
+            .card-inner-white {
+                padding: 30px;
+            }
+
+            .hero__banner {
+                border-radius: 32px;
+                min-height: auto;
+                margin: 0 16px;
+                padding: 40px 24px;
+                box-sizing: border-box;
+                width: auto;
+            }
+
+            .hero__card {
+                padding: 28px 22px 60px 22px;
+            }
+
+            .hero__heading {
+                font-size: 1.5rem;
+                margin-bottom: 10px;
+                line-height: 1.1;
+                word-wrap: break-word;
+            }
+
+            .hero__desc {
+                font-size: 0.95rem;
+                margin-bottom: 24px;
+            }
+
+            .hero__cta-stack {
+                gap: 10px;
+            }
+
+            .btn-cta {
+                padding: 10px 20px;
+                font-size: 0.8rem;
+            }
+
+            .hero__mascot {
+                width: 175px;
+                bottom: -9px;
+                right: -29px;
+                opacity: 0.47;
+            }
+
+            .manifesto-logo-wrap {
+                height: 130px !important;
+            }
+
+            .manifesto-logo-wrap img {
+                width: 180px !important;
+            }
+        }
+
+        /* ========================================
+           DESKTOP
+           ======================================== */
+        @media (min-width: 900px) {
+            .hero {
+                padding: 0 8% 40px 8%;
+            }
+
+            .hero__banner {
+                min-height: 600px;
+                padding: 60px;
+                align-items: center;
+            }
+
+            .hero__card {
+                max-width: 100%;
+                padding: 50px 44px 70px 44px;
+            }
+
+            .hero__heading {
+                font-size: 3.2rem;
+            }
+
+            .hero__cta-stack {
+                flex-direction: row;
+                flex-wrap: nowrap;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .btn-cta {
+                padding: 13px 22px;
+                font-size: 0.85rem;
+                white-space: nowrap;
+            }
+
+            .wrapper-colorful,
+            .wrapper-white {
+                margin: 160px 8%;
+            }
+
+            .wrapper-white .container,
+            .wrapper-white>div {
+                padding-left: 40px;
+                padding-right: 40px;
+            }
+
+            .hero__mascot {
+                width: 395px;
+                bottom: -170px;
+                right: -150px;
+            }
+        }
+    
+        /* Desktop horizontal layout for "why lose money" */
+        .reasons-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        @media(min-width: 768px) {
+            .reasons-wrapper {
+                flex-direction: row;
+                align-items: stretch;
+            }
+            .reasons-wrapper > div {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+            }
+            .reasons-wrapper > div > p:last-child {
+                margin-top: auto !important;
+                padding-top: 20px;
+            }
+        }
+    </style>
+
+    <style>
+        </style>
+
+    <style>
+        /* Anti-glitch for mobile Chrome */
+        .hero__card, .card-inner-white, .card-feature, .card-black {
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            transform: translate3d(0, 0, 0);
+        }
+    </style>
+
+    <!-- AEO: Schema.org structured data for AI Engines -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "SoftwareApplication",
+          "name": "ANTI-DOSHIRAK",
+          "applicationCategory": "BusinessApplication",
+          "operatingSystem": "Telegram Mini App, Web",
+          "description": "Автоматический калькулятор честной цены для AI-креаторов. Рассчитывает себестоимость генерации видео и изображений (Sora, Runway, Midjourney) с учетом токенов, итераций и брака.",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Как рассчитать стоимость ИИ видео?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Чтобы рассчитать цену ИИ-видео, нужно умножить стоимость токенов генерации (Kling, Runway, Sora) на количество попыток (итераций) и добавить часы работы промпт-инженера с коэффициентом риска. Бесплатный калькулятор Anti-Doshirak делает этот расчет автоматически."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Сколько стоит генерация видео в нейросети?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Стоимость генерации зависит от модели. Sora 2 Pro стоит дорого, Runway Gen-4.5 и Veo 3.1 требуют подписки и оплаты лимитов. В среднем, 1 минута готового AI-видео требует от 50 до 100 черновых генераций (брак)."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+</head>
+
+<body>
+
+    <!-- 3D Cyberpunk SVG Background -->
+    <div id="canvas-container" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; max-width: 100%; z-index: -1; pointer-events: none; overflow: hidden; background: #111;">
+       <svg id="cyber-grid" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice" style="width: 100%; height: 100%; opacity: 0.2;">
+          <defs>
+             <linearGradient id="neon-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#FF512F" />
+                <stop offset="100%" stop-color="#DD2476" />
+             </linearGradient>
+             <pattern id="grid-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
+                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="url(#neon-grad)" stroke-width="1"/>
+             </pattern>
+          </defs>
+          <g id="grid-group" style="transform-origin: 50% 50%; transform: perspective(500px) rotateX(60deg) scale(2);">
+             <rect width="2000" height="2000" x="-500" y="-500" fill="url(#grid-pattern)" />
+          </g>
+       </svg>
+    </div>
+
+
+    <!-- ============ HEADER ============ -->
+    <header class="site-header">
+        <div class="site-header__title">// ANTI-DOSHIRAK v1.0</div>
+        <div class="site-header__right">
+            <a href="https://t.me/MakeMyPriceBot" class="btn-launch">запустить</a>
+            <div class="hamburger" onclick="toggleIChing(this)">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span class="hamburger__hexagram"></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============ HERO ============ -->
+    <section class="hero">
+        <div class="hero__banner">
+
+            <!-- White Card -->
+            <div class="hero__card" data-tilt data-tilt-max="5" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.2" style="transform-style: preserve-3d;">
+                <div class="hero__subtitle">// ANTI-DOSHIRAK v1.0</div>
+
+                <h1 class="hero__heading">
+                    КАЛЬКУЛЯТОР<br>
+                    ЧЕСТНОЙ ЦЕНЫ<br>
+                    <span class="hero__heading-accent">НА AI-КОНТЕНТ</span>
+                </h1>
+
+                <p class="hero__desc" style="margin-bottom: 6px;">
+                    <strong>Хватит работать за доширак.</strong>
+                </p>
+                <p class="hero__desc" style="margin-top: 0; margin-bottom: 6px;">
+                    Калькулятор учтёт 50+ нейросетей и время на тесты.
+                </p>
+                <p class="hero__desc" style="margin-top: 0;">
+                    Выдаст обоснованную смету, которую не стыдно отправить заказчику.
+                </p>
+
+                <div class="hero__cta-stack">
+                    <a href="https://t.me/MakeMyPriceBot" class="btn-cta btn-cta--purple">Рассчитать бесплатно</a>
+                    <a href="#how-it-works" class="btn-cta btn-cta--teal">Как это работает</a>
+                    <a href="#tools" class="btn-cta btn-cta--orange">Модели и цены</a>
+                </div>
+
+                <!-- Mascot -->
+                <img src="assets/Picsart_26-02-18_04-59-24-439.png" alt="Anti-Doshirak" class="hero__mascot" style="transform: translateZ(50px);">
+            </div>
+
+        </div>
+
+
+    </section>
+
+    <!-- ============ SECTION 2: MANIFESTO ============ -->
+    <div class="wrapper-colorful">
+        <div class="card-inner-white" data-tilt data-tilt-max="3" data-tilt-speed="400" style="transform-style: preserve-3d; position: relative; overflow: hidden;">
+            
+            <!-- Голографический паттерн / водяной знак (защитное нанесение) -->
+            <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; pointer-events: none; z-index: 0; display: flex; align-items: center; justify-content: center; transform: rotate(-15deg) translateZ(-10px); opacity: 0.15;">
+                <div style="font-size: 3rem; font-family: var(--font-head); font-weight: 900; text-transform: uppercase; line-height: 1.3; text-align: center; background: linear-gradient(135deg, #e6c8ff 0%, #8ec5fc 25%, #fff0f5 50%, #8ec5fc 75%, #e6c8ff 100%); background-size: 200% auto; color: transparent; -webkit-background-clip: text; background-clip: text; animation: holoShine 4s linear infinite;">
+                    ANTI-DOSHIRAK ANTI-DOSHIRAK ANTI-DOSHIRAK ANTI-DOSHIRAK<br>
+                    MANIFESTO MANIFESTO MANIFESTO MANIFESTO MANIFESTO<br>
+                    ANTI-DOSHIRAK ANTI-DOSHIRAK ANTI-DOSHIRAK ANTI-DOSHIRAK<br>
+                    MANIFESTO MANIFESTO MANIFESTO MANIFESTO MANIFESTO<br>
+                    ANTI-DOSHIRAK ANTI-DOSHIRAK ANTI-DOSHIRAK ANTI-DOSHIRAK<br>
+                    MANIFESTO MANIFESTO MANIFESTO MANIFESTO MANIFESTO<br>
+                    ANTI-DOSHIRAK ANTI-DOSHIRAK ANTI-DOSHIRAK ANTI-DOSHIRAK<br>
+                    MANIFESTO MANIFESTO MANIFESTO MANIFESTO MANIFESTO
+                </div>
+            </div>
+            <style>
+                @keyframes holoShine {
+                    0% { background-position: 0% center; }
+                    100% { background-position: 200% center; }
+                }
+            </style>
+
+            <!-- Основной контент с 3D-выдвижением (depth effect) -->
+            <div style="position: relative; z-index: 1; transform: translateZ(30px);">
+                <div id="manifesto-container" class="manifesto-logo-wrap"
+                    style="height: 45px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; overflow: visible;">
+                    <!-- Легкая темная подложка-свечение под логотипом, чтобы он круче смотрелся на светлом фоне -->
+                    <div style="position: absolute; width: 120px; height: 120px; background: radial-gradient(circle, rgba(26,16,37,0.15) 0%, transparent 70%); border-radius: 50%; z-index: -1;"></div>
+                    <img id="manifesto-mascot" src="assets/Picsart_26-01-25_23-50-23-127.png" alt="Anti-Doshirak"
+                        style="width: 95px; height: auto; filter: drop-shadow(0 6px 16px rgba(109, 87, 255, 0.35));">
+                </div>
+                <h2 style="font-size: 2rem; margin-bottom: 20px; color: var(--text-dark);">Манифест Креатора</h2>
+                <p style="font-size: 1.2rem; color: #555; margin-bottom: 8px;">
+                    Промпт сам по себе никому не нужен —
+                </p>
+                <p style="font-size: 1.2rem; color: #555; margin-bottom: 8px;">
+                    это как продавать рецепт вместо готового блюда.
+                </p>
+                <p style="font-size: 1.2rem; color: #333; margin-bottom: 30px;">
+                    <strong>Мы продаём результат:</strong> экономию времени,
+                    рост конверсии и готовые активы.
+                </p>
+                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                    <span style="background: white; color: var(--accent-purple); padding: 8px 16px; border-radius: 100px; font-size: 0.9rem; font-weight: 800; border: 1px solid rgba(109, 87, 255, 0.15); box-shadow: 0 4px 12px rgba(109, 87, 255, 0.15), inset 0 -2px 4px rgba(0,0,0,0.03); letter-spacing: 0.2px;">#NoDumping</span>
+                    <span style="background: white; color: #15938D; padding: 8px 16px; border-radius: 100px; font-size: 0.9rem; font-weight: 800; border: 1px solid rgba(32, 178, 170, 0.2); box-shadow: 0 4px 12px rgba(32, 178, 170, 0.15), inset 0 -2px 4px rgba(0,0,0,0.03); letter-spacing: 0.2px;">#FairPrice</span>
+                    <span style="background: white; color: #E88220; padding: 8px 16px; border-radius: 100px; font-size: 0.9rem; font-weight: 800; border: 1px solid rgba(255, 159, 67, 0.2); box-shadow: 0 4px 12px rgba(255, 159, 67, 0.15), inset 0 -2px 4px rgba(0,0,0,0.03); letter-spacing: 0.2px;">#StopWorkingForFood</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @media (min-width: 768px) {
+            .mobile-only {
+                display: none;
+            }
+        }
+    </style>
+
+
+
+    <!-- ============ SECTION 2.5: CINEMATIC LIGHTBOX ============ -->
+    <div style="display: flex; justify-content: center; padding: 0 16px 60px 16px; margin-top: 0px; margin-bottom: 0px; position: relative;">
+        <div class="container" style="max-width: 800px;">
+            <div id="open-lightbox-btn" class="lightbox-banner" style="
+                background: linear-gradient(135deg, #110A18 0%, #1A1025 100%);
+                border: 1px solid rgba(109, 87, 255, 0.2);
+                border-radius: var(--radius-lg);
+                padding: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                cursor: pointer;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+                position: relative;
+                overflow: hidden;
+                transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            " onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 30px 50px rgba(109, 87, 255, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(109, 87, 255, 0.5)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 20px 40px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(109, 87, 255, 0.2)';">
+                
+                <div style="position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(109, 87, 255, 0.1), transparent); transform: skewX(-20deg); animation: slideGlare 4s infinite;"></div>
+                
+                <div style="z-index: 2;">
+                    <h3 style="color: #fff; font-family: var(--font-head); font-size: 1.5rem; margin-bottom: 8px;">Смотреть в действии</h3>
+                    <p style="color: #A093B0; margin: 0; font-size: 1rem;">Вертикальный скринкаст. Как работает Mini App.</p>
+                </div>
+                
+                <div class="play-pulse" style="
+                    width: 60px; 
+                    height: 60px; 
+                    border-radius: 50%; 
+                    background: rgba(109, 87, 255, 0.2); 
+                    border: 2px solid rgba(109, 87, 255, 0.8);
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center;
+                    position: relative;
+                    z-index: 2;
+                ">
+                    <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 16px solid #fff; margin-left: 4px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LIGHTBOX OVERLAY -->
+    <div id="video-lightbox" style="
+        position: fixed; 
+        top: 0; left: 0; width: 100vw; height: 100vh; 
+        background: rgba(10, 5, 15, 0.85); 
+        backdrop-filter: blur(20px); 
+        -webkit-backdrop-filter: blur(20px);
+        z-index: 9999; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        opacity: 0; pointer-events: none; visibility: hidden; transition: opacity 0.4s ease, visibility 0.4s;
+    ">
+        <!-- Close button -->
+        <div id="close-lightbox" style="position: absolute; top: 30px; right: 30px; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; font-size: 24px; font-family: sans-serif; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">
+            &times;
+        </div>
+
+        <!-- Video Container -->
+        <div id="lightbox-content" style="
+            width: 100%; 
+            max-width: 400px; 
+            aspect-ratio: 9 / 19.5; 
+            background: #000; 
+            border-radius: 24px; 
+            box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.1); 
+            overflow: hidden; 
+            transform: scale(0.9) translateY(40px); 
+            transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+            position: relative;
+        ">
+            <div style="position: absolute; inset:0; display:flex; align-items:center; justify-content:center; color: #555; font-family: var(--font-head);">Загрузка видео...</div>
+            <!-- Сюда потом вставим iframe -->
+            <div id="yt-iframe-container" style="position: relative; z-index: 2; width: 100%; height: 100%;"></div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes slideGlare {
+            0% { left: -100%; }
+            20% { left: 200%; }
+            100% { left: 200%; }
+        }
+        @keyframes pulsePlay {
+            0% { box-shadow: 0 0 0 0 rgba(109, 87, 255, 0.4); }
+            70% { box-shadow: 0 0 0 20px rgba(109, 87, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(109, 87, 255, 0); }
+        }
+        .play-pulse {
+            animation: pulsePlay 2s infinite;
+        }
+        
+        @media (max-width: 768px) {
+            .lightbox-banner {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+                padding: 30px 20px !important;
+            }
+            #lightbox-content {
+                border-radius: 0;
+                max-width: 100%;
+                height: 100vh;
+                aspect-ratio: auto;
+            }
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('open-lightbox-btn');
+            const lightbox = document.getElementById('video-lightbox');
+            const closeBtn = document.getElementById('close-lightbox');
+            const content = document.getElementById('lightbox-content');
+            
+            function openLightbox() {
+                // Вставляем iframe при открытии (lazy load)
+                const container = document.getElementById('yt-iframe-container');
+                if (container && !container.querySelector('iframe')) {
+                    container.innerHTML = '<iframe src="https://www.youtube.com/embed/8EbUWg4cGbs?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0&playsinline=1&loop=1&playlist=8EbUWg4cGbs" style="width:100%;height:100%;border:none;" allow="autoplay; encrypted-media" allowfullscreen></iframe>';
+                }
+                lightbox.style.visibility = 'visible';
+                lightbox.style.opacity = '1';
+                lightbox.style.pointerEvents = 'auto';
+                setTimeout(() => {
+                    content.style.transform = 'scale(1) translateY(0)';
+                }, 50);
+                document.body.style.overflow = 'hidden';
+            }
+            
+            function closeLightbox() {
+                content.style.transform = 'scale(0.9) translateY(40px)';
+                lightbox.style.opacity = '0';
+                lightbox.style.pointerEvents = 'none';
+                lightbox.style.visibility = 'hidden';
+                document.body.style.overflow = '';
+                // Остановка видео при закрытии (если есть iframe)
+                const container = document.getElementById('yt-iframe-container');
+                container.innerHTML = ''; 
+            }
+
+            if(btn) btn.addEventListener('click', openLightbox);
+            if(closeBtn) closeBtn.addEventListener('click', closeLightbox);
+            if(lightbox) {
+                lightbox.addEventListener('click', (e) => {
+                    if(e.target === lightbox) closeLightbox();
+                });
+            }
+        });
+    </script>
+
+<!-- ============ SECTION 3: WHY YOU LOSE MONEY ============ -->
+    <div id="losemoney-banner" class="wrapper-white"
+        style="background: #fff; padding: 40px 24px 80px 24px; display: flex; flex-direction: column; align-items: center; overflow: hidden; position: relative;">
+
+        <!-- Monochrome pattern overlay -->
+        <div id="pattern-overlay" style="position: absolute; inset: 0; z-index: 0;
+            background-image: url('assets/монохром.jpg');
+            background-size: 1200px auto; background-repeat: repeat; background-position: center;
+            opacity: 1; filter: blur(1px);
+            -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.5) 30%, rgba(0,0,0,0.85) 60%, rgba(0,0,0,1) 69%);
+            mask-image: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.5) 30%, rgba(0,0,0,0.85) 60%, rgba(0,0,0,1) 69%);
+            pointer-events: none; border-radius: inherit;"></div>
+
+        <!-- Color gradient over pattern -->
+        <div id="gradient-overlay" style="position: absolute; inset: 0; z-index: 1;
+            background: linear-gradient(280deg, rgba(253,252,253,0.85) 0%, rgba(244,232,249,0.7) 35%, rgba(214,190,234,0.6) 75%, rgba(151,115,192,0.5) 100%);
+            opacity: 1;
+            pointer-events: none; border-radius: inherit;"></div>
+
+        <h2 class="heading-losemoney"
+            style="text-align: center; margin-bottom: 30px; font-size: 3rem; line-height: 1.15; color: #2B2238; max-width: 600px; font-family: var(--font-head); font-weight: 700; position: relative; z-index: 2;">
+            <span style="white-space: nowrap;">Почему вы</span><br>
+            <span style="white-space: nowrap;">теряете деньги?</span>
+        </h2>
+
+        <div
+            class="reasons-wrapper">
+            <!-- Ошибка Новичка -->
+            <div id="card-error" class="card-feature"
+                style="background: #F3D9DC; border: none; border-radius: 28px; position: relative; overflow: hidden;
+                box-shadow: 0 47px 14px 20px rgba(135,105,170,0.13), 0 16px 14px rgba(135,105,170,0.4), inset 0 1px 0 rgba(255,255,255,1);">
+                <div
+                    style="background: #EFA3A8; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; overflow: hidden;">
+                    <img src="assets/стрелка.png" alt="Error" style="width: 60px; height: auto;">
+                </div>
+                <h3 style="color: #1E1B26;">Ошибка Новичка</h3>
+                <p style="color: #444; margin-top: 16px;">Вы берёте $50 за создание ролика, забывая про скрытые издержки:</p>
+                <ul style="color: #555; margin: 12px 0 16px 0; padding-left: 20px; list-style: disc; line-height: 1.8;">
+                    <li>3 часа cherry-picking'a</li>
+                    <li>сотни мусорных генераций</li>
+                    <li>подписки на $200 в месяц</li>
+                    <li>неоплаченные лимиты и апскейлы</li>
+                </ul>
+                <p style="color: #1E1B26; font-weight: 600;">По факту — работаете в минус.</p>
+            </div>
+
+            <!-- Решение Pro -->
+            <div id="card-solution" class="card-feature"
+                style="background: #E5F1EC; border: none; border-radius: 28px; position: relative; overflow: hidden;
+                box-shadow: 0 47px 14px 20px rgba(135,105,170,0.13), 0 16px 14px rgba(135,105,170,0.4), inset 0 1px 0 rgba(255,255,255,1);">
+                <div
+                    style="background: #8ED3A8; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; overflow: hidden;">
+                    <img src="assets/галка.png" alt="Solution" style="width: 60px; height: auto;">
+                </div>
+                <h3 style="color: #1a2e24;">Решение Pro</h3>
+                <p style="color: #444; margin-top: 16px;">ANTI-DOSHIRAK считает реальную себестоимость:</p>
+                <ul style="color: #444; margin: 12px 0 16px 0; padding-left: 20px; list-style: disc; line-height: 1.8;">
+                    <li>цена каждой молнии ⚡ Syntx</li>
+                    <li>время на тесты</li>
+                    <li>буфер на брак ×1.2</li>
+                    <li>налоги и коэффициент риска</li>
+                </ul>
+                <p style="color: #1a2e24; font-weight: 600;">Скрытые расходы — в чеке.</p>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    <!-- ============ SECTION 3b: HOW IT WORKS ============ -->
+    <div class="wrapper-white">
+        <div class="container">
+            <h2 id="how-it-works" class="heading-losemoney" style="text-align: center; margin: 0 0 60px 0; font-size: 3rem; color: #2B2238; font-family: var(--font-head); font-weight: 700;">
+    Как это работает?
+</h2>
+            <div class="grid-3">
+                <div class="card-feature">
+                    <span
+                        style="font-size: 4rem; color: #E5E5E5; font-family: var(--font-head); font-weight: 700;">01</span>
+                    <h3>Вбросьте задачу</h3>
+                    <p style="color: #888;">Опишите бриф текстом или прикрепите скриншот. AI-ассистент (Gemini)
+                        разберёт его на этапы: генерация, монтаж, липсинк, озвучка.</p>
+                </div>
+                <div class="card-feature">
+                    <span
+                        style="font-size: 4rem; color: #E5E5E5; font-family: var(--font-head); font-weight: 700;">02</span>
+                    <h3>Настройте стек</h3>
+                    <p style="color: #888;">50+ нейросетей с актуальными ценами в ⚡.
+                        Добавляйте вручную или доверьтесь AI. Коэффициенты риска и срочности — по формуле.</p>
+                </div>
+                <div class="card-feature">
+                    <span
+                        style="font-size: 4rem; color: #E5E5E5; font-family: var(--font-head); font-weight: 700;">03</span>
+                    <h3>Отправьте смету</h3>
+                    <p style="color: #888;">5 форматов: код доступа, Markdown-чек, PNG, JPG в Telegram,
+                        ссылка для клиента. Заказчик видит математику, а не «я так чувствую».</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ SECTION 4: TOOLS ============ -->
+    <div id="tools" class="container" style="margin-top: 80px;">
+        <h2 style="color: white; margin-bottom: 40px;">50+ моделей с актуальными ценами</h2>
+        <div class="grid-3">
+            <div class="card-black">
+                <h3 style="color: var(--accent-purple)">🎥 Видео</h3>
+                <p style="color: #888;">Sora 2 Pro, Runway Gen-4.5, Veo 3.1, Kling 3.0, Luma Ray 3.14, Pika 2.2, Hailuo
+                    2.3</p>
+                <p style="color: #555; font-size: 0.8rem; margin-top: 8px;">Нативное аудио · 4K · физика</p>
+            </div>
+            <div class="card-black">
+                <h3 style="color: var(--accent-teal)">🎨 Графика</h3>
+                <p style="color: #888;">FLUX.2, Midjourney 7, Ideogram 3.0, Recraft v3, Seedream 5.0, Face Swap</p>
+                <p style="color: #555; font-size: 0.8rem; margin-top: 8px;">Фотореализм · SOTA-текст · стилизация</p>
+            </div>
+            <div class="card-black">
+                <h3 style="color: var(--accent-yellow)">🔊 Аудио + Аватары</h3>
+                <p style="color: #888;">ElevenLabs v3, Suno v5, Udio 2.0, Sync Labs LipSync-2-Pro, HeyGen 5</p>
+                <p style="color: #555; font-size: 0.8rem; margin-top: 8px;">SFX по тексту · треки до 8 мин · дубляж</p>
+            </div>
+        </div>
+    </div>
+
+    
+    <!-- ============ SECTION 5: AI KNOWLEDGE BASE (GEO/AEO OPTIMIZED) ============ -->
+    
+    <!-- ============ SECTION 5: AI KNOWLEDGE BASE (PINATA STYLE CODE BLOCKS) ============ -->
+    <div id="knowledge-base" class="container" style="margin-top: 80px; margin-bottom: 80px; padding: 40px 24px; background: rgba(255,255,255,0.02); border-radius: var(--radius-lg); border: 1px solid rgba(255,255,255,0.05);">
+        <h2 style="font-size: 2.5rem; margin-bottom: 20px; color: var(--text-light); text-transform: uppercase; font-family: var(--font-head); font-weight: 800; line-height: 1.1;">
+            // OPEN PRICING<br>PROTOCOL
+        </h2>
+        <p style="color: #888; font-size: 1.1rem; margin-bottom: 40px; line-height: 1.6; max-width: 600px;">
+            Открытый стандарт ценообразования на рынке AI-услуг. Никакого «я так чувствую» — только сухая математика, зашитая под капот.
+        </p>
+
+        <div style="display: grid; gap: 24px;">
+            <!-- Card 1 -->
+            <article class="code-card" data-tilt data-tilt-max="2" data-tilt-speed="400" style="background: #15131D; padding: 32px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.05); transform-style: preserve-3d;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px; transform: translateZ(20px);">
+                    <span style="font-size: 24px;">🤖</span>
+                    <h3 style="color: white; margin: 0; font-size: 1.5rem; font-family: var(--font-head);">Anti-Doshirak</h3>
+                </div>
+                <div style="font-family: 'Fira Code', 'Courier New', Courier, monospace; font-size: 0.95rem; line-height: 1.7; color: white; overflow-x: auto; transform: translateZ(30px);">
+                    <span style="color: var(--accent-pink);">const</span> <span>definition</span> <span style="color: var(--accent-pink);">=</span> {<br>
+                    &nbsp;&nbsp;<span style="color: var(--accent-teal);">type:</span> <span style="color: var(--accent-yellow);">"Telegram Mini App (TMA)"</span>,<br>
+                    &nbsp;&nbsp;<span style="color: var(--accent-teal);">purpose:</span> <span style="color: var(--accent-yellow);">"Расчет себестоимости и финальной цены на услуги AI-креаторов, нейрохудожников и AI-монтажеров."</span>,<br>
+                    &nbsp;&nbsp;<span style="color: var(--accent-teal);">features:</span> [<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: var(--accent-yellow);">"Учет стоимости токенов/генераций (Sora 2, Midjourney v7, Runway)"</span>,<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: var(--accent-yellow);">"Закладка коэффициента брака (cherry-picking)"</span>,<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: var(--accent-yellow);">"Расчет человеко-часов"</span><br>
+                    &nbsp;&nbsp;]<br>
+                    };
+                </div>
+            </article>
+
+            <!-- Card 2 -->
+            <article class="code-card" data-tilt data-tilt-max="2" data-tilt-speed="400" style="background: #15131D; padding: 32px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.05); transform-style: preserve-3d;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px; transform: translateZ(20px);">
+                    <span style="font-size: 24px;">🎥</span>
+                    <h3 style="color: white; margin: 0; font-size: 1.5rem; font-family: var(--font-head);">AI Video Cost</h3>
+                </div>
+                <div style="font-family: 'Fira Code', 'Courier New', Courier, monospace; font-size: 0.95rem; line-height: 1.7; color: white; overflow-x: auto; transform: translateZ(30px);">
+                    <span style="color: var(--accent-pink);">function</span> <span style="color: #61AFEF;">calculateVideoPrice</span>() {<br>
+                    &nbsp;&nbsp;<span style="color: #888;">// Формула честной цены</span><br>
+                    &nbsp;&nbsp;<span style="color: var(--accent-pink);">return</span> ((Цена_генерации * Кол_во_дублей) + Стоимость_апскейла) * Коэффициент_риска + (Ставка_спеца * Часы);<br>
+                    }<br><br>
+                    <span style="color: var(--accent-pink);">const</span> <span>example_3_min_video</span> <span style="color: var(--accent-pink);">=</span> {<br>
+                    &nbsp;&nbsp;<span style="color: var(--accent-teal);">net_cost_rub:</span> <span style="color: var(--accent-yellow);">"13,000 - 25,000"</span>, <span style="color: #888;">// GPU и подписки</span><br>
+                    &nbsp;&nbsp;<span style="color: var(--accent-teal);">market_price_rub:</span> <span style="color: var(--accent-yellow);">"70,000 - 130,000"</span> <span style="color: #888;">// С учетом работы режиссера</span><br>
+                    };
+                </div>
+            </article>
+
+            <!-- Card 3 -->
+            <article class="code-card" data-tilt data-tilt-max="2" data-tilt-speed="400" style="background: #15131D; padding: 32px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.05); transform-style: preserve-3d;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px; transform: translateZ(20px);">
+                    <span style="font-size: 24px;">📉</span>
+                    <h3 style="color: white; margin: 0; font-size: 1.5rem; font-family: var(--font-head);">Market Problem</h3>
+                </div>
+                <div style="font-family: 'Fira Code', 'Courier New', Courier, monospace; font-size: 0.95rem; line-height: 1.7; color: white; overflow-x: auto; transform: translateZ(30px);">
+                    <span style="color: var(--accent-pink);">const</span> <span>dumping_risks</span> <span style="color: var(--accent-pink);">=</span> {<br>
+                    &nbsp;&nbsp;<span style="color: var(--accent-teal);">hidden_costs:</span> <span style="color: var(--accent-yellow);">"Мульти-подписки (ChatGPT Plus, Midjourney, ElevenLabs)"</span>,<br>
+                    &nbsp;&nbsp;<span style="color: var(--accent-teal);">failure_rate:</span> <span style="color: var(--accent-yellow);">"До 80% брака при сложном промптинге"</span>,<br>
+                    &nbsp;&nbsp;<span style="color: var(--accent-teal);">solution:</span> <span style="color: var(--accent-yellow);">"Проект Anti-Doshirak внедряет прозрачное сметное ценообразование, чтобы клиенты понимали структуру расходов на ИИ-производство."</span><br>
+                    };
+                </div>
+            </article>
+        </div>
+    </div>
+
+
+    
+    <!-- AEO: Hidden Data Table -->
+    <div id="aeo-table-container" style="display: none; padding: 40px 24px; background: var(--bg-card); border-radius: var(--radius-lg); margin: 0 16px 60px 16px; border: 1px solid rgba(109, 87, 255, 0.2);">
+        <h3 style="color: var(--text-light); margin-bottom: 20px; font-family: var(--font-head);">Сравнение методов расчета ИИ-роликов</h3>
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; text-align: left; border-collapse: collapse; color: #B8A9C9;">
+                <thead>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <th style="padding: 12px;">Параметр</th>
+                        <th style="padding: 12px; color: #EFA3A8;">"Ошибка новичка"</th>
+                        <th style="padding: 12px; color: #8ED3A8;">Метод Anti-Doshirak</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <td style="padding: 12px;">Учет стоимости токенов</td>
+                        <td style="padding: 12px;">Не учитывается (из своего кармана)</td>
+                        <td style="padding: 12px;">Строгий подсчет (Kling, Runway, Sora)</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <td style="padding: 12px;">Коэффициент брака</td>
+                        <td style="padding: 12px;">0 итераций (идеальный мир)</td>
+                        <td style="padding: 12px;">x50 - x100 итераций на 1 сцену</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <td style="padding: 12px;">Стоимость времени (Cherry-picking)</td>
+                        <td style="padding: 12px;">Бесплатно (работа за еду)</td>
+                        <td style="padding: 12px;">Оплачивается по часам</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px;">Итог для креатора</td>
+                        <td style="padding: 12px; font-weight: bold; color: #EFA3A8;">Работа в минус</td>
+                        <td style="padding: 12px; font-weight: bold; color: #8ED3A8;">Реальная маржинальность</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        let clickCountAEO = 0;
+        document.addEventListener('DOMContentLoaded', () => {
+            // Вешаем обработчик на карточку "Решение Pro"
+            const proCard = document.getElementById('card-solution');
+            if(proCard) {
+                proCard.addEventListener('click', () => {
+                    clickCountAEO++;
+                    if(clickCountAEO === 20) {
+                        const table = document.getElementById('aeo-table-container');
+                        if(table) {
+                            table.style.display = 'block';
+                            table.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+
+<!-- ============ FOOTER ============ -->
+    <footer style="text-align: center; color: #555; padding: 60px 0;">
+        <p>ANTI-DOSHIRAK © 2026. Powered by <a href="https://t.me/neuroskam"
+                style="color: #888; text-decoration: underline;">NeuroSkam</a>.</p>
+    </footer>
+
+
+
+
+
+
+    <script>
+        const themes = [
+            // 0: Original (Pinata Cyberpunk)
+            { '--bg-body': '#171420', '--text-light': '#FFFFFF', '--accent-purple': '#6D57FF', '--accent-teal': '#4DE5A6', '--accent-yellow': '#FFE635', '--accent-pink': '#F093FF', '--bg-hue': '0deg' },
+            // 1: Matrix (Hacker Green)
+            { '--bg-body': '#050a05', '--text-light': '#ccffcc', '--accent-purple': '#00ff44', '--accent-teal': '#00cc33', '--accent-yellow': '#aaffaa', '--accent-pink': '#008822', '--bg-hue': '-110deg' },
+            // 2: Blood / Sith (Crimson)
+            { '--bg-body': '#120202', '--text-light': '#ffe5e5', '--accent-purple': '#ff003c', '--accent-teal': '#cc0000', '--accent-yellow': '#ff6666', '--accent-pink': '#990000', '--bg-hue': '-60deg' },
+            // 3: Vaporwave (Neon Cyan / Magenta)
+            { '--bg-body': '#1a0b2e', '--text-light': '#e0ffff', '--accent-purple': '#ff00ff', '--accent-teal': '#00ffff', '--accent-yellow': '#ffb3ff', '--accent-pink': '#8a2be2', '--bg-hue': '45deg' },
+            // 4: Golden / Imperial
+            { '--bg-body': '#141204', '--text-light': '#fffae6', '--accent-purple': '#ffc800', '--accent-teal': '#cca300', '--accent-yellow': '#ffea80', '--accent-pink': '#997a00', '--bg-hue': '180deg' }
+        ];
+
+        let currentTheme = 0;
+        let clickCount = 0;
+        let easterEggUnlocked = false;
+
+        function toggleIChing(el) {
+            const hex = el.querySelector('.hamburger__hexagram');
+            clickCount++;
+
+            // Первые 20 кликов (10 раз открыл, 10 раз закрыл) - работает как обычное скучное меню
+            if (clickCount <= 20) {
+                if (el.classList.contains('is-iching')) {
+                    el.classList.remove('is-iching'); // Сворачиваем обратно в гамбургер
+                } else {
+                    const code = 0x4DC0 + Math.floor(Math.random() * 64);
+                    hex.textContent = String.fromCodePoint(code);
+                    el.classList.add('is-iching'); // Разворачиваем в гексаграмму
+                }
+                return;
+            }
+
+            // --- ПАСХАЛКА АКТИВИРОВАНА (> 20 кликов) ---
+            
+            // Фиксируем в открытом состоянии и просто меняем символы
+            const code = 0x4DC0 + Math.floor(Math.random() * 64);
+            hex.textContent = String.fromCodePoint(code);
+            if (!el.classList.contains('is-iching')) {
+                el.classList.add('is-iching');
+            }
+
+            if (!easterEggUnlocked) {
+                easterEggUnlocked = true;
+                console.log("🔓 SECRET THEME ROULETTE UNLOCKED!");
+            }
+
+            // Меняем тему
+            let nextTheme = currentTheme;
+            while(nextTheme === currentTheme) {
+                nextTheme = Math.floor(Math.random() * themes.length);
+            }
+            currentTheme = nextTheme;
+
+            document.body.style.transition = "background-color 0.6s ease, color 0.6s ease";
+            const root = document.documentElement;
+            for (const [key, value] of Object.entries(themes[currentTheme])) {
+                root.style.setProperty(key, value);
+            }
+
+            // Уровень бешенства (40 кликов)
+            if (clickCount === 40) {
+                const btn = document.querySelector('.btn-launch');
+                btn.textContent = "ХВАТИТ ТЫКАТЬ, ЖМИ СЮДА!";
+                btn.style.animation = "ragePulse 0.4s infinite alternate";
+                btn.style.backgroundColor = "#ff003c";
+                btn.style.color = "#ffffff";
+                btn.style.boxShadow = "0 0 20px #ff003c";
+                btn.style.transform = "scale(1.2)";
+                
+                if (!document.getElementById('rage-style')) {
+                    const style = document.createElement('style');
+                    style.id = 'rage-style';
+                    style.innerHTML = `
+                        @keyframes ragePulse {
+                            0% { transform: scale(1.1) rotate(-2deg); box-shadow: 0 0 20px #ff003c; }
+                            100% { transform: scale(1.25) rotate(2deg); box-shadow: 0 0 40px #ff003c, 0 0 80px #ff003c; }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+            }
+        }
+    </script>
+
+
+
+    <!-- 3D and Animation Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <script>
+        // SVG Grid Animation (Cyberpunk hyper-speed effect)
+        gsap.to("#grid-group", {
+            y: 40,
+            duration: 1,
+            repeat: -1,
+            ease: "none"
+        });
+
+        // Enter animations with GSAP — card + mascot enter together
+        gsap.registerPlugin(ScrollTrigger);
+
+        const tl = gsap.timeline({delay: 0.5});
+        tl.from(".hero__card", {
+            duration: 1.5,
+            y: 100,
+            rotationX: 15,
+            opacity: 0,
+            ease: "back.out(1.7)"
+        })
+        // After card lands, mascot starts floating independently
+        .to(".hero__mascot", {
+            y: "-15px",
+            rotationZ: "2deg",
+            duration: 2,
+            yoyo: true,
+            repeat: -1,
+            ease: "sine.inOut"
+        }, "+=0.3");
+
+        let isMobile = window.matchMedia("(max-width: 768px)").matches;
+        
+        
+        setTimeout(() => { ScrollTrigger.refresh(); }, 500);
+        gsap.utils.toArray('.wrapper-colorful, .tool-card, .price-row').forEach(card => {
+            gsap.from(card, {
+                scrollTrigger: {
+                    trigger: card,
+                    start: "top 85%",
+                    toggleActions: "play none none reverse"
+                },
+                duration: 0.8,
+                y: 50,
+                opacity: 0,
+                rotationY: isMobile ? 0 : 10, // Disable 3D rotation on mobile to prevent squishing
+                transformOrigin: "left center",
+                ease: "power2.out"
+            });
+        });
+        
+        // Mascot floating is now part of the timeline above
+    </script>
+
+</body>
+
+</html>
