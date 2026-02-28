@@ -1425,6 +1425,20 @@
         
         
         // Pure JS scroll animations for tool cards and price rows
+        
+        // Manifesto fade-up on scroll
+        const manifestoObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, i * 150);
+                    manifestoObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.2 });
+        document.querySelectorAll('.manifesto-fadeup').forEach(el => manifestoObserver.observe(el));
+
         const cardObserver = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
                 if (entry.isIntersecting) {
