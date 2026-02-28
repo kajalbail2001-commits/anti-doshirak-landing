@@ -780,8 +780,12 @@
     </script>
 <style>
         
+        
         @keyframes gridMove {
-            to { transform: translateY(40px); }
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(40px); }
+        }
+
         }
 
             100% { transform: perspective(500px) rotateX(60deg) scale(2) translateY(40px); }
@@ -807,8 +811,10 @@
                 <path d="M 40 0 L 0 0 0 40" fill="none" stroke="url(#neon-grad)" stroke-width="1"/>
              </pattern>
           </defs>
-          <g id="grid-group">
+          <g style="transform-origin: center; transform: perspective(500px) rotateX(60deg) scale(2);">
+             <g id="grid-group">
                 <rect width="2000" height="2000" x="-500" y="-500" fill="url(#grid-pattern)" />
+             </g>
           </g>
        </svg>
     </div>
