@@ -805,6 +805,19 @@
             100% { background-position: 0 40px; }
         }
 </style>
+
+    <style id="hardcoded-overrides">
+        /* Force text colors regardless of themes or specificity */
+        body .btn-cta.btn-cta--teal,
+        body .btn-cta.btn-cta--orange {
+            color: #000000 !important;
+            -webkit-text-fill-color: #000000 !important;
+        }
+        
+        body .hamburger span:not(.hamburger__hexagram) {
+            background-color: #FFFFFF !important;
+        }
+    </style>
 </head>
 
 <body>
