@@ -208,9 +208,7 @@
         .hero__banner {
             filter: hue-rotate(var(--bg-hue, 0deg));
             transition: filter 0.6s ease;
-            
-            background: linear-gradient(135deg, #1A1025 0%, #2D1B4E 50%, #1A1025 100%);
-
+            background: url('assets/bg-waves.jpg') no-repeat center center;
             background-size: cover;
             border-radius: var(--radius-xl);
             padding: 40px 24px 60px 24px;
@@ -576,6 +574,10 @@
                 font-size: 0.8rem;
             }
 
+
+            .hero__banner {
+                filter: none !important;
+            }
             .hero__mascot {
                 width: 178px;
                 bottom: -35px;
@@ -586,6 +588,13 @@
                 height: 130px !important;
             }
 
+
+            #pattern-overlay {
+                filter: none !important;
+                -webkit-mask-image: none !important;
+                mask-image: none !important;
+                opacity: 0.5 !important;
+            }
             .manifesto-logo-wrap img {
                 width: 180px !important;
             }
@@ -638,6 +647,10 @@
                 padding-right: 40px;
             }
 
+
+            .hero__banner {
+                filter: none !important;
+            }
             .hero__mascot {
                 width: 395px;
                 bottom: -170px;
