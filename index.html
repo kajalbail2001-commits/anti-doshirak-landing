@@ -363,9 +363,9 @@
         /* Logo/Mascot (popping out of card bottom-right) */
         .hero__mascot {
             position: absolute;
-            bottom: -9px;
-            right: -29px;
-            width: 175px;
+            bottom: -35px;
+            right: -36px;
+            width: 178px;
             height: auto;
             z-index: 40;
             pointer-events: none;
@@ -575,9 +575,9 @@
             }
 
             .hero__mascot {
-                width: 175px;
-                bottom: -9px;
-                right: -29px;
+                width: 178px;
+                bottom: -35px;
+                right: -36px;
             }
 
             .manifesto-logo-wrap {
@@ -1437,35 +1437,3 @@
 </body>
 
 </html>
-<!-- MASCOT TUNER (temp) -->
-<div id="mascot-tuner" style="position:fixed;bottom:0;left:0;right:0;z-index:99999;background:rgba(0,0,0,0.9);padding:12px 16px;font-family:monospace;color:#0f0;font-size:13px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
-  <label>R:<input type="range" id="t-right" min="-100" max="100" value="-29" style="width:80px" oninput="updateMascot()"><span id="v-right">-29</span></label>
-  <label>B:<input type="range" id="t-bottom" min="-100" max="100" value="-9" style="width:80px" oninput="updateMascot()"><span id="v-bottom">-9</span></label>
-  <label>W:<input type="range" id="t-width" min="80" max="400" value="175" style="width:80px" oninput="updateMascot()"><span id="v-width">175</span></label>
-  <label>O:<input type="range" id="t-opacity" min="0" max="100" value="47" style="width:60px" oninput="updateMascot()"><span id="v-opacity">0.47</span></label>
-  <button onclick="copyCSS()" style="background:#0f0;color:#000;border:none;padding:6px 10px;cursor:pointer;border-radius:4px;font-weight:bold;">COPY</button>
-  <button onclick="document.getElementById('mascot-tuner').style.display='none'" style="background:#f00;color:#fff;border:none;padding:4px 8px;cursor:pointer;border-radius:4px;">X</button>
-</div>
-<script>
-function updateMascot(){
-  const m=document.querySelector('.hero__mascot');
-  if(!m)return;
-  const r=document.getElementById('t-right').value;
-  const b=document.getElementById('t-bottom').value;
-  const w=document.getElementById('t-width').value;
-  const o=document.getElementById('t-opacity').value/100;
-  m.style.right=r+'px';m.style.bottom=b+'px';m.style.width=w+'px';m.style.opacity=o;
-  document.getElementById('v-right').textContent=r;
-  document.getElementById('v-bottom').textContent=b;
-  document.getElementById('v-width').textContent=w;
-  document.getElementById('v-opacity').textContent=o.toFixed(2);
-}
-function copyCSS(){
-  const r=document.getElementById('t-right').value;
-  const b=document.getElementById('t-bottom').value;
-  const w=document.getElementById('t-width').value;
-  const o=(document.getElementById('t-opacity').value/100).toFixed(2);
-  const css=`right: ${r}px; bottom: ${b}px; width: ${w}px; opacity: ${o};`;
-  navigator.clipboard.writeText(css).then(()=>alert('Copied: '+css)).catch(()=>prompt('Copy:',css));
-}
-</script>
