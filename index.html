@@ -261,6 +261,9 @@
             color: var(--accent-teal);
             margin-bottom: 20px;
             letter-spacing: 0.02em;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.6s ease forwards 0.3s;
         }
 
         .hero__heading {
@@ -272,6 +275,9 @@
             margin-bottom: 8px;
             text-transform: uppercase;
             letter-spacing: -0.03em;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.7s ease forwards 0.5s;
         }
 
         .hero__heading-accent {
@@ -285,6 +291,9 @@
             line-height: 1.5;
             margin-top: 16px;
             margin-bottom: 32px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.6s ease forwards 0.7s;
         }
 
         /* CTA buttons — stacked like Pinata */
@@ -295,6 +304,18 @@
             align-items: flex-start;
             position: relative;
             z-index: 25;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.6s ease forwards 0.9s;
+        }
+
+        /* Mascot floating — pure CSS */
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes floatMascot {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(2deg); }
         }
 
         .btn-cta {
@@ -338,7 +359,8 @@
             height: auto;
             z-index: 40;
             pointer-events: none;
-            opacity: 0.47;
+            opacity: 0;
+            animation: fadeUp 0.6s ease forwards 1.1s, floatMascot 4s ease-in-out 1.7s infinite;
             filter: drop-shadow(0 4px 10px rgba(23, 20, 32, 0.15));
         }
 
@@ -1362,26 +1384,8 @@
             ease: "none"
         });
 
-        // Enter animations with GSAP — card + mascot enter together
+        // Animations — hero uses pure CSS, GSAP only for scroll sections
         gsap.registerPlugin(ScrollTrigger);
-
-        const tl = gsap.timeline({delay: 0.5});
-        tl.from(".hero__card", {
-            duration: 1.5,
-            y: 100,
-            rotationX: 15,
-            opacity: 0,
-            ease: "back.out(1.7)"
-        })
-        // After card lands, mascot starts floating independently
-        .to(".hero__mascot", {
-            y: "-15px",
-            rotationZ: "2deg",
-            duration: 2,
-            yoyo: true,
-            repeat: -1,
-            ease: "sine.inOut"
-        }, "+=0.3");
 
         let isMobile = window.matchMedia("(max-width: 768px)").matches;
         
@@ -1403,7 +1407,7 @@
             });
         });
         
-        // Mascot floating is now part of the timeline above
+        // Scroll animations for lower sections only
     </script>
 
 </body>
