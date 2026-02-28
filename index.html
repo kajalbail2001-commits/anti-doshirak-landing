@@ -1414,7 +1414,7 @@
         
         
         setTimeout(() => { ScrollTrigger.refresh(); }, 500);
-        gsap.utils.toArray('.wrapper-colorful, .tool-card, .price-row').forEach(card => {
+        gsap.utils.toArray('.tool-card, .price-row').forEach(card => {
             gsap.from(card, {
                 scrollTrigger: {
                     trigger: card,
