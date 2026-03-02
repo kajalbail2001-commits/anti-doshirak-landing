@@ -1544,7 +1544,7 @@
 
 
     <!-- IFRAME TUNER (temp) -->
-    <div id="iframe-tuner" style="position:fixed;bottom:0;left:0;right:0;z-index:99999;background:rgba(0,0,0,0.9);padding:12px 16px;font-family:monospace;color:#0f0;font-size:13px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+    <div id="iframe-tuner" style="position:fixed;top:50%;right:0;transform:translateY(-50%);z-index:99999;background:rgba(0,0,0,0.8);padding:16px;font-family:monospace;color:#0f0;font-size:13px;display:flex;flex-direction:column;gap:15px;align-items:flex-end;border-radius:8px 0 0 8px;">
       <label>Aspect H:<input type="range" id="t-aspect" min="15" max="22" step="0.1" value="18" style="width:120px" oninput="updateIframe()"><span id="v-aspect">18</span></label>
       <label>Max Width:<input type="range" id="t-width" min="300" max="600" step="5" value="400" style="width:120px" oninput="updateIframe()"><span id="v-width">400</span>px</label>
       <button onclick="copyIframeCSS()" style="background:#0f0;color:#000;border:none;padding:6px 12px;cursor:pointer;border-radius:4px;font-weight:bold;">COPY CSS</button>
