@@ -1031,8 +1031,8 @@
         <!-- Video Container -->
         <div id="lightbox-content" style="
             width: 100%; 
-            max-width: 400px; 
-            aspect-ratio: 9 / 18; 
+            max-width: 370px; 
+            aspect-ratio: 9 / 15; 
             background: #000; 
             border-radius: 24px; 
             box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.1); 
@@ -1543,30 +1543,7 @@
     </script>
 
 
-    <!-- IFRAME TUNER (temp) -->
-    <div id="iframe-tuner" style="position:fixed;top:50%;right:0;transform:translateY(-50%);z-index:99999;background:rgba(0,0,0,0.8);padding:16px;font-family:monospace;color:#0f0;font-size:13px;display:flex;flex-direction:column;gap:15px;align-items:flex-end;border-radius:8px 0 0 8px;">
-      <label>Aspect H:<input type="range" id="t-aspect" min="15" max="22" step="0.1" value="18" style="width:120px" oninput="updateIframe()"><span id="v-aspect">18</span></label>
-      <label>Max Width:<input type="range" id="t-width" min="300" max="600" step="5" value="400" style="width:120px" oninput="updateIframe()"><span id="v-width">400</span>px</label>
-      <button onclick="copyIframeCSS()" style="background:#0f0;color:#000;border:none;padding:6px 12px;cursor:pointer;border-radius:4px;font-weight:bold;">COPY CSS</button>
-    </div>
-    <script>
-    function updateIframe() {
-      const content = document.getElementById('lightbox-content');
-      if(!content) return;
-      const h = document.getElementById('t-aspect').value;
-      const w = document.getElementById('t-width').value;
-      content.style.aspectRatio = '9 / ' + h;
-      content.style.maxWidth = w + 'px';
-      document.getElementById('v-aspect').textContent = h;
-      document.getElementById('v-width').textContent = w;
-    }
-    function copyIframeCSS() {
-      const h = document.getElementById('t-aspect').value;
-      const w = document.getElementById('t-width').value;
-      const css = `aspect-ratio: 9 / ${h}; max-width: ${w}px;`;
-      navigator.clipboard.writeText(css).then(()=>alert('Copied: '+css)).catch(()=>prompt('Copy:',css));
-    }
-    </script>
+    
 
 </body>
 
